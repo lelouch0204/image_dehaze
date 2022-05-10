@@ -78,6 +78,7 @@ if __name__ == '__main__':
     try:
         fn = sys.argv[1]
         targ_dir = sys.argv[2]
+        sz = int(sys.argv[3])
     except:
         fn = './image/15.png'
 
@@ -92,9 +93,9 @@ if __name__ == '__main__':
 
         I = src.astype('float64')/255;
     
-        dark = DarkChannel(I,15);
+        dark = DarkChannel(I,sz);
         A = AtmLight(I,dark);
-        te = TransmissionEstimate(I,A,15);
+        te = TransmissionEstimate(I,A,sz);
         t = TransmissionRefine(src,te);
         J = Recover(I,t,A,0.1);
         targ_path = targ_dir + fname.replace(".png", "_dcp_dehaze.png")
