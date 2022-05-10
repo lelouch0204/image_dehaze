@@ -74,28 +74,29 @@ def Recover(im,t,A,tx = 0.1):
 
 if __name__ == '__main__':
     import sys
+    import os
     try:
         fn = sys.argv[1]
+        targ_dir = sys.argv[2]
     except:
         fn = './image/15.png'
 
     def nothing(*argv):
         pass
 
-    src = cv2.imread(fn);
-
-    I = src.astype('float64')/255;
- 
-    dark = DarkChannel(I,15);
-    A = AtmLight(I,dark);
-    te = TransmissionEstimate(I,A,15);
-    t = TransmissionRefine(src,te);
-    J = Recover(I,t,A,0.1);
-
-    cv2.imshow("dark",dark);
-    cv2.imshow("t",t);
-    cv2.imshow('I',src);
-    cv2.imshow('J',J);
-    cv2.imwrite("./image/J.png",J*255);
-    cv2.waitKey();
+    fnames = os.listdir(fn)
+    fnames_full = [fn+x for x in fnames]
     
+    for fname, fname_full in zip(fnames, fnames_full):
+        src = cv2.imread(fname_full);
+
+        I = src.astype('float64')/255;
+    
+        dark = DarkChannel(I,15);
+        A = AtmLight(I,dark);
+        te = TransmissionEstimate(I,A,15);
+        t = TransmissionRefine(src,te);
+        J = Recover(I,t,A,0.1);
+        targ_path = targ_dir + fname.replace(".png", "_dcp_dehaze.png")
+        cv2.imwrite(targ_path, J)
+        
